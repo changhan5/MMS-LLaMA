@@ -244,7 +244,8 @@ class mms_llama_dataset(FairseqDataset):
         speech = speech.unsqueeze(1)
         start_idx = random.randint(0, self.noise.shape[1] - speech.shape[1])
         noise_segment = self.noise[:, start_idx : start_idx + speech.shape[1]]
-        snr_level = torch.tensor([random.choice(self.snr_levels)])
+        snr_level = random.choice(self.snr_levels) if self.subset == "train" else float(self.snr_target)
+        snr_level = torch.tensor([snr_level])
         noisy_speech = torchaudio.functional.add_noise(speech, noise_segment, snr_level)
 
         return noisy_speech.squeeze(1).numpy()
